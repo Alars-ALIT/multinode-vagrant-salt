@@ -1,0 +1,24 @@
+{% set joinHosts = [] %}
+{% for host, hostinfo in salt['mine.get']('*', 'network.interfaces').items() %}
+{% set thisHost = hostinfo['eth1']['inet'][0]['address'] if hostinfo['eth1'].has_key('inet') else hostinfo['br0']['inet'][0]['address'] %}
+{% if host_ip != thisHost %}
+{% do joinHosts.append("\"" + hostinfo['eth1']['inet'][0]['address'] + "\"" if hostinfo['eth1'].has_key('inet') else hostinfo['br0']['inet'][0]['address'] + "\"") %}
+{% endif %}
+{% endfor %}
+{
+    {% if 'server' in grains['consul-mode'] %}
+    "bootstrap-expect": 1,
+    "advertise": "{{ host_ip }}",
+    "bind_addr": "{{ host_ip }}",
+    {% endif %}
+    {% if joinHosts|length%}
+    "start_join": [{{  joinHosts|join(', ') }}],
+    {% endif %}
+    "datacenter": "nyc2",
+    "data_dir": "/var/consul",
+    "encrypt": "{{ pillar['consul']['encrypt'] }}",
+    "log_level": "INFO",
+    "enable_syslog": true
+
+
+}
