@@ -1,9 +1,13 @@
 MASTER_IP = "10.1.1.3"
 
-$script = <<SCRIPT
+$bootstrapMinion = <<SCRIPT
 echo "#{MASTER_IP} salt" >> /etc/hosts
 hostname `cat /etc/hostname`
 echo Updated hosts entry for 'salt' to #{MASTER_IP}
+SCRIPT
+
+$bootstapMaster = <<SCRIPT
+apt-get install -y python-git
 SCRIPT
 
 Vagrant.configure("2") do |config|
@@ -14,6 +18,7 @@ Vagrant.configure("2") do |config|
 		master.vm.hostname = "master"
 		master.vm.network :private_network, ip: "#{MASTER_IP}"
 		master.vm.synced_folder "salt", "/srv/salt/"
+		master.vm.provision :shell, :inline => $bootstapMaster
 		master.vm.provision :salt do |salt|
 			salt.master_config = "salt/configs/master.conf"
 			salt.install_master = true
@@ -36,7 +41,7 @@ Vagrant.configure("2") do |config|
 				salt.run_highstate = true
 			end	
 			# Set master hostname
-			config.vm.provision :shell, :inline => $script, :args => [MASTER_IP]
+			minion.vm.provision :shell, :inline => $bootstrapMinion, :args => [MASTER_IP]
 		end
 	end
   end
