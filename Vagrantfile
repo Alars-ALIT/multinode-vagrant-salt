@@ -4,10 +4,13 @@ $bootstrapMinion = <<SCRIPT
 echo "#{MASTER_IP} salt" >> /etc/hosts
 hostname `cat /etc/hostname`
 echo Updated hosts entry for 'salt' to #{MASTER_IP}
+apt-get install -y python-pip
+pip install docker-py
 SCRIPT
 
 $bootstapMaster = <<SCRIPT
 apt-get install -y python-git
+echo Installet python-git on master
 SCRIPT
 
 Vagrant.configure("2") do |config|
@@ -18,7 +21,7 @@ Vagrant.configure("2") do |config|
 		master.vm.hostname = "master"
 		master.vm.network :private_network, ip: "#{MASTER_IP}"
 		master.vm.synced_folder "salt", "/srv/salt/"
-		master.vm.provision :shell, :inline => $bootstapMaster
+		master.vm.provision :shell, inline: $bootstapMaster
 		master.vm.provision :salt do |salt|
 			salt.master_config = "salt/configs/master.conf"
 			salt.install_master = true
@@ -34,14 +37,14 @@ Vagrant.configure("2") do |config|
 			ip = i + 3
 			minion.vm.hostname = "minion-0#{i}"
 			minion.vm.network :private_network, ip: "10.1.1.#{ip}"
+			# Set master hostname
+			minion.vm.provision :shell, :inline => $bootstrapMinion, :args => [MASTER_IP]
 			minion.vm.provision :salt do |salt|
 				salt.minion_config = "salt/configs/minion.conf"
 				salt.minion_key = "salt/key/minion.pem"
 				salt.minion_pub = "salt/key/minion.pub"
 				salt.run_highstate = true
 			end	
-			# Set master hostname
-			minion.vm.provision :shell, :inline => $bootstrapMinion, :args => [MASTER_IP]
 		end
 	end
   end
