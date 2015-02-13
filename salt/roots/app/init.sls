@@ -31,21 +31,6 @@ registrator-image:
   docker.pulled:
     - name: progrium/registrator
 
-#registrator-container:
-#  docker.installed:
-#    - name: registrator
-#    - hostname: registrator
-#    - command: ["consul://10.1.1.4:8500"]
-#    - image: progrium/registrator
-#    - kwargs: "-v /tmp:/tmp"
-#    - volumes:
-#      - /var/run/docker.sock:/tmp/docker.sock
-#    - volumes:
-#      - /var/run/docker.sock:
-#        bind: /tmp/docker.sock
-#        ro: true      
-    - require_in: registrator
-
 registrator:
   cmd.run:
     - name: "docker run -d -v /var/run/docker.sock:/tmp/docker.sock --name registrator -h registrator progrium/registrator consul://10.1.1.4:8500" 
