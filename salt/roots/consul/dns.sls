@@ -14,5 +14,8 @@ dnsmasq:
   
 /etc/dnsmasq.d/10-consul:
   file.managed:
-    - source: salt://consul/dnsmasq.conf
+    - source: salt://consul/dnsmasq.conf.jinja
+    - template: jinja
+    - context:
+         host_ip: {{ salt['network.interfaces']()['eth1']['inet'][0]['address'] }}
     - makedirs: True

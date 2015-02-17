@@ -7,15 +7,17 @@
 {% endfor %}
 {
     {% if 'server' in grains['consul-mode'] %}
-    "bootstrap_expect": 1,
+    "bootstrap_expect": 2,
     "server": true,
     {% endif %}
     "advertise": "{{ host_ip }}",
     "bind_addr": "{{ host_ip }}",
+    "client_addr": "{{ host_ip }}",
     {% if joinHosts|length%}
     "start_join": [{{  joinHosts|join(', ') }}],
     {% endif %}
     "datacenter": "dc1",
+    "ui_dir": "/home/consul/dist",
     "data_dir": "/var/consul",
     "encrypt": "{{ pillar['consul']['encrypt'] }}",
     "log_level": "INFO",

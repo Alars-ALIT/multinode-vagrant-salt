@@ -44,7 +44,7 @@ Vagrant.configure("2") do |config|
 				salt.minion_key = "salt/key/minion.pem"
 				salt.minion_pub = "salt/key/minion.pub"
 				salt.run_highstate = true
-			end	
+			end
 		end
 	end
   end
