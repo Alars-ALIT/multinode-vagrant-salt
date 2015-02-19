@@ -18,6 +18,9 @@ app-container:
         - "/tmp:/tmp2"
       - ports:
         - "8080/tcp"
+      - environment:
+        - SERVICE_TAGS: app
+        - SERVICE_CHECK_SCRIPT: curl --silent --fail localhost:8888
       - require_in: app
 
 app:
@@ -26,13 +29,11 @@ app:
     - port_bindings:
         "8080":
           HostIp: "0.0.0.0"
-          HostPort: "8888"
-    - environment:
-      - SERVICE_TAGS: test-app   
+          HostPort: "8888"     
     - binds:
         "/tmp":
           bind: "/tmp2"
-          ro: false
+          ro: false  
 
 registrator-image:
   docker.pulled:

@@ -10,7 +10,7 @@ SCRIPT
 
 $bootstapMaster = <<SCRIPT
 apt-get install -y python-git
-echo Installet python-git on master
+echo Installed python-git on master
 SCRIPT
 
 Vagrant.configure("2") do |config|
