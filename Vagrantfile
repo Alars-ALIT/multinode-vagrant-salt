@@ -22,6 +22,7 @@ Vagrant.configure("2") do |config|
 		master.vm.network :private_network, ip: "#{MASTER_IP}"
 		master.vm.synced_folder "salt", "/srv/salt/"
 		master.vm.provision :shell, inline: $bootstapMaster
+		master.vm.provision :shell, :inline => $bootstrapMinion, :args => [MASTER_IP]
 		master.vm.provision :salt do |salt|
 			salt.master_config = "salt/configs/master.conf"
 			salt.install_master = true
@@ -29,6 +30,10 @@ Vagrant.configure("2") do |config|
 			salt.master_pub = "salt/key/master.pub"
 			salt.seed_master = {minion: "salt/key/minion.pub"}
 			
+			salt.minion_config = "salt/configs/minion.conf"
+			salt.minion_key = "salt/key/minion.pem"
+			salt.minion_pub = "salt/key/minion.pub"
+			salt.run_highstate = true
 		end
 	end
 	

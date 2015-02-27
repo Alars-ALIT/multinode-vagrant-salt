@@ -1,0 +1,41 @@
+deployer-user:
+  user.present:
+    - name: deployer
+    - group: deployer
+
+deployer-sudo:
+  file.append:
+    - name: /etc/sudoers
+    - text:
+      - "%deployer ALL=NOPASSWD: ALL"
+
+deployer-public-key:  
+  file.managed:
+    - name: /home/deployer/.ssh/id_rsa.pub
+    - source: salt://keys/deployer/id_rsa.pub
+
+deployer-private-key:  
+  file.managed:
+    - name: /home/deployer/.ssh/id_rsa
+    - source: salt://keys/deployer/id_rsa
+
+deployer-auth:
+  ssh_auth.present:
+    - user: deployer
+    - source: salt://keys/deployer/id_rsa.pub
+
+deploy-dir:
+  file.directory:
+    - name: /tmp/apps
+    - user: deployer
+    - group: deployer
+    - mode: 755
+    - makedirs: True
+
+deployer-script:  
+  file.managed:
+    - name: /home/deployer/deploy.sh
+    - source: salt://deploy/deploy.sh
+    - user: deployer
+    - group: deployer
+    - mode: 755

@@ -1,7 +1,7 @@
 
 base:
   '*':
-    - sanity
+    - base
 
   'roles:consul':
     - match: grain
@@ -12,4 +12,5 @@ base:
   'G@dynamic-roles:app or G@roles:app':
     - match: compound
     - docker
+    - docker.log
     - app
