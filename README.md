@@ -46,3 +46,5 @@ auth_token: "DpWfwdTgA97PwQ5sRl9R"
 
  docker build -t alars - < busybox-go-webapp.tar.gz
  docker save alars > alars.tar
+
+ docker run -d -e APP_NAME=tepp -v /tmp/test:/tmp/build go14

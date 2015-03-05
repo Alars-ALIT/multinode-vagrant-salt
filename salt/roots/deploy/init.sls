@@ -1,7 +1,10 @@
 deployer-user:
   user.present:
     - name: deployer
-    - group: deployer
+    - groups: 
+      - git
+      - deployer
+      - docker
 
 deployer-sudo:
   file.append:
@@ -26,7 +29,15 @@ deployer-auth:
 
 deploy-dir:
   file.directory:
-    - name: /tmp/apps
+    - name: /tmp/deploy
+    - user: git
+    - group: deployer
+    - mode: 755
+    - makedirs: True
+
+build-dir:
+  file.directory:
+    - name: /tmp/build
     - user: deployer
     - group: deployer
     - mode: 755
