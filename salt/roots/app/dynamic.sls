@@ -1,21 +1,17 @@
-deploy-dir:
-  file.directory:
-    - name: /tmp/deploy
-    - mode: 755
-    - makedirs: True
-
 {% for app in salt['file.find']('/tmp/deploy', type='f') %}
 {% set appPath=app|replace('.tar', '') %}
 {% set appName=appPath|replace('/tmp/deploy/', '') %}
 
-#app-build-{{ appName }}:
-#  docker.built:
-#    - name: app-{{ appName }}
-#    - path: {{ appPath }}
+{% if 'app' in grains['roles'] or appName in grains['roles']%}
 
-app-gone:
-  docker.absent:
-    - name: {{ appName }}
+#app-gone:
+#  docker.absent:
+#    - name: {{ appName }}
+
+app-remove-previous-{{ appName }}:
+  cmd.run:
+    - name: "docker rm -f $(docker ps -a | grep {{ appName }} | awk {'print $1'})"
+    - unless: docker ps -a | grep {{ appName }} | awk {'print $1'}
 
 app-load-{{ appName }}:
   cmd.run:
@@ -24,10 +20,6 @@ app-load-{{ appName }}:
 #    - name: app-{{ appName }}
 #    - source: salt://deploy/app-go-app.tar
 
-app-remove-previous-{{ appName }}:
-  cmd.run:
-    - name: "docker rm -f $(docker ps -a | grep {{ appName }} | awk {'print $1'})"
-    - unless: docker ps -a | grep {{ appName }} | awk {'print $1'}
 
 app-container-{{ appName }}:
     docker.installed:
@@ -49,4 +41,5 @@ app-{{ appName }}:
           HostIp: "0.0.0.0"
           HostPort: ""     
 
+{% endif %}
 {% endfor %}

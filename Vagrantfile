@@ -13,6 +13,10 @@ apt-get install -y python-git
 echo Installed python-git on master
 SCRIPT
 
+$setGrain = <<SCRIPT
+salt-call grains.append $1 $2
+SCRIPT
+
 Vagrant.configure("2") do |config|
     config.vm.box = 'docker-vagrant'
 	config.vm.box_url = 'https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vmwarefusion.box'
@@ -33,7 +37,10 @@ Vagrant.configure("2") do |config|
 			salt.minion_config = "salt/configs/minion.conf"
 			salt.minion_key = "salt/key/minion.pem"
 			salt.minion_pub = "salt/key/minion.pub"
-			salt.run_highstate = true
+			["builder"].each do |role|
+				master.vm.provision :shell, :inline => $setGrain, :args => ["roles", role]
+			end
+			#salt.run_highstate = true			
 		end
 	end
 	
@@ -48,7 +55,12 @@ Vagrant.configure("2") do |config|
 				salt.minion_config = "salt/configs/minion.conf"
 				salt.minion_key = "salt/key/minion.pem"
 				salt.minion_pub = "salt/key/minion.pub"
-				salt.run_highstate = true
+				#salt.run_highstate = true
+				["app"].each do |role|
+				    minion.vm.provision :shell, :inline => $setGrain, :args => ["roles", role]
+			    end
+			    minion.vm.provision :shell, :inline => $setGrain, :args => ["consul-mode", "server"]
+			    #salt.run_highstate = true
 			end
 		end
 	end

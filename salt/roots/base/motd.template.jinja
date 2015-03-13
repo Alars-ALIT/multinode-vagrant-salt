@@ -1,0 +1,8 @@
+------------------------------------------------------------------------------
+{{ grains['fqdn'] }}
+
+Roles: {% if grains['roles'] is defined %} {{ grains['roles'] }} {% endif %}
+
+Docker: {{ grains['dockerVersion'] }}
+{{ grains['consulVersion'] }}
+------------------------------------------------------------------------------

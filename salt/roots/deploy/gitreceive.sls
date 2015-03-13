@@ -16,6 +16,7 @@ git-public-key:
   file.managed:
     - name: /home/git/.ssh/id_rsa.pub
     - source: salt://keys/alars/id_rsa.pub
+    - makedirs: True
 
 #git-auth:
 #  ssh_auth.present:

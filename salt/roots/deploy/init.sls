@@ -1,5 +1,14 @@
+git:
+  group:
+    - present
+
+deployer:
+  group:
+    - present
+
+
 deployer-user:
-  user.present:
+   user.present:
     - name: deployer
     - groups: 
       - git
@@ -16,24 +25,26 @@ deployer-public-key:
   file.managed:
     - name: /home/deployer/.ssh/id_rsa.pub
     - source: salt://keys/deployer/id_rsa.pub
+    - makedirs: True
 
 deployer-private-key:  
   file.managed:
     - name: /home/deployer/.ssh/id_rsa
     - source: salt://keys/deployer/id_rsa
+    - makedirs: True
 
 deployer-auth:
   ssh_auth.present:
     - user: deployer
     - source: salt://keys/deployer/id_rsa.pub
 
-deploy-dir:
-  file.directory:
-    - name: /tmp/deploy
-    - user: git
-    - group: deployer
-    - mode: 755
-    - makedirs: True
+#deploy-dir:
+#  file.directory:
+#    - name: /tmp/deploy
+#    - user: git
+#    - group: deployer
+#    - mode: 755
+#    - makedirs: True
 
 build-dir:
   file.directory:

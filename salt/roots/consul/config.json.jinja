@@ -6,7 +6,7 @@
 {% endif %}
 {% endfor %}
 {
-    {% if 'server' in grains['consul-mode'] %}
+    {% if grains['consul-mode'] is defined and 'server' in grains['consul-mode'] %}
     "bootstrap_expect": 2,
     "server": true,
     {% endif %}

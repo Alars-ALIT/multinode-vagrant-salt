@@ -21,6 +21,6 @@ sudo salt '*' cp.get_file salt://deploy/$APP.tar /tmp/deploy/$APP.tar
 
 # Deploy
 echo "----> Deploying $APP on minions"
-sudo salt 'minion-*' state.sls app.dynamic
+sudo salt 'minion-*' state.sls app.dynamic --state-output=mixed
 
 exit 0

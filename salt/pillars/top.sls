@@ -2,7 +2,8 @@ base:
 
   '*':
     - base
-
-  'roles:consul':
-    - match: grain
     - consul
+
+#  'roles:consul':
+#    - match: grain
+#    - consul
