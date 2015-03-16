@@ -40,7 +40,6 @@ consul.tar.gz:
     - require:
       - user: consul-user
 
-
 consul:
   service.running:
     - enable: True

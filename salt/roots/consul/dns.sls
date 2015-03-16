@@ -19,3 +19,8 @@ dnsmasq:
     - context:
          host_ip: {{ salt['network.interfaces']()['eth1']['inet'][0]['address'] }}
     - makedirs: True
+
+/etc/default/docker:
+  file.append:
+    - text:
+      - "DOCKER_OPTS='--dns {{ salt['network.interfaces']()['eth1']['inet'][0]['address'] }} --dns 8.8.8.8 --dns-search service.consul'"

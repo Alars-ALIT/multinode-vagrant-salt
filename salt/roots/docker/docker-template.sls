@@ -13,6 +13,7 @@
 #    - name: "docker rm -f $(docker ps -a | grep {{ image_name }} | awk {'print $1'})"
 #    - unless: docker ps -a | grep {{ image_name }} | awk {'print $1'}
 
+{% if not override_installed is defined %}
 {{ container_name }}-container:
     docker.installed:
       - name: {{ container_name }}
@@ -24,6 +25,7 @@
       - environment:
         - SERVICE_ID: {{ container_hostname }}:{{ container_tag }}
         - SERVICE_NAME: {{ container_name }}  
+{% endif %}
 {% if not override_running is defined %}
 {{ container_name }}:
   docker.running:
