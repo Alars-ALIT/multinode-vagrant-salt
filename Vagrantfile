@@ -37,7 +37,7 @@ Vagrant.configure("2") do |config|
 			salt.minion_config = "salt/configs/minion.conf"
 			salt.minion_key = "salt/key/minion.pem"
 			salt.minion_pub = "salt/key/minion.pub"
-			["builder"].each do |role|
+			["lb"].each do |role|
 				master.vm.provision :shell, :inline => $setGrain, :args => ["roles", role]
 			end
 			#salt.run_highstate = true			

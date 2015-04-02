@@ -2,8 +2,8 @@
 base:
   '*':
     - base
-    - consul
     - docker
+    - consul
     - consul.dns
     - consul.ui
     - app.registrator

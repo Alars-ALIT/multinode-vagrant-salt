@@ -1,6 +1,8 @@
 consul-user:
   user.present:
     - name: consul
+    - groups: 
+      - docker
 
 consul.tar.gz:
   archive.extracted:

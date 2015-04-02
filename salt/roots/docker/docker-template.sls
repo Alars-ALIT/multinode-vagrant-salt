@@ -25,6 +25,9 @@
       - environment:
         - SERVICE_ID: {{ container_hostname }}:{{ container_tag }}
         - SERVICE_NAME: {{ container_name }}  
+        - SERVICE_TAGS: version:{{ container_tag }}        
+        #- SERVICE_CHECK_SCRIPT: curl --fail localhost:$(sudo docker port {{ container_name }} | sed 's/.*[0-9.]*://')
+        #- SERVICE_CHECK_SCRIPT: echo $(sudo docker port go-app | sed 's/.*[0-9.]*://')
 {% endif %}
 {% if not override_running is defined %}
 {{ container_name }}:
