@@ -50,4 +50,17 @@ auth_token: "DpWfwdTgA97PwQ5sRl9R"
 
  docker run -d -e APP_NAME=tepp -v /tmp/test:/tmp/build go14
 
+
+### Docker swarm 
+
+# On all
+docker run -d swarm join --addr=10.1.1.3:2375 consul://10.1.1.3:8500/swarm
+
+# On one
+docker run -d -p -name swarm-manager 8333:2375 swarm manage consul://10.1.1.3:8500/swarm
+
+docker -H tcp://localhost:8333 run -d --name www -p 80:8080 alars/busybox-go-webapp
+
+docker -H tcp://localhost:8333 ps
+ 
  

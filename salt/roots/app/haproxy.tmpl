@@ -1,0 +1,28 @@
+global
+    maxconn 256
+    debug
+
+defaults
+    mode http
+    timeout connect 4000ms
+    timeout client 40000ms
+    timeout server 40000ms
+
+frontend www
+    bind *:80
+
+    # Generated automatically by consul-template
+{{ range services }}    
+    acl host_{{ .Name }} hdr(host) -i {{ .Name }}.{{ env "HAPROXY_DOMAIN" }} 
+    use_backend {{ .Name }}_backend if host_{{ .Name }}    
+{{ end }}
+
+{{range $tag, $services := service "go-app" | byTag}}{{$tag}}
+# {{range $services}} server {{.Name}} {{.Address}}:{{.Port}}
+{{end}}{{end}}
+
+{{ range services }}
+backend {{ .Name }}_backend
+{{ range service .Name }}
+   server {{ .Node }} {{ .Address }}:{{ .Port }}{{ end }}
+{{ end }}

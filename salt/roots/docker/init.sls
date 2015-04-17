@@ -12,8 +12,6 @@ pip-docker-py:
     - require:
       - pkg: docker-python-apt
 
-    
-
 docker-dependencies:
    pkg.installed:
     - pkgs:
