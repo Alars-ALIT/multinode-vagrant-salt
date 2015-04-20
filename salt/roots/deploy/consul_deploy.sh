@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #https://github.com/sequenceiq/docker-consul-watch-plugn/blob/1.7.0-consul/consul-event-handler.sh
+#consul watch -http-addr=10.1.1.3:8500 -pe event -name deploy ./consul_deploy.sh
 
 : ${LOGFILE:=/tmp/consul_handler.log}
 : ${BRIDGE_IP:=10.1.1.3}
@@ -20,10 +21,10 @@ debugJson(){
 }
 
 get_field() {
-  declare json="$1"
+  declare json=$1
   declare field="$2"
 
-  echo "$json"|jq ".$field" -r
+  echo $json|jq ".$field" -r
 }
 
 __envVars() {
@@ -50,9 +51,15 @@ __getHostName() {
 deploy(){
   declare containerName="$1"
   declare imageName="$2"
-  declare runCmd="echo fist" #"$3"		
+  declare runCmd="$3"		
+  
+  echo "Pulling $imageName"
   docker pull $imageName
+  
+  echo "Removing any existing containger with name $containerName"
   docker rm -f $containerName  > /dev/null 2>&1 || true
+  
+  echo "Starting container with: $runCmd"
   $runCmd
 }
 
@@ -89,12 +96,15 @@ process_json() {
     echo "Got deployment descriptor:"
     echo ""
     debugJson $DEPLOY_DESC
+    
+    containerName=$(echo $DEPLOY_DESC | jq ".containerName" -r)
+    imageName=$(echo $DEPLOY_DESC | jq ".imageName" -r)
+    runCmd=$(echo $DEPLOY_DESC | jq ".runCmd" -r)
 
-    containerName=$(get_field $DEPLOY_DESC containerName)
-    imageName=$(get_field $DEPLOY_DESC imageName)
+    echo "Run command: $runCmd"
 
     echo "About to deploy $containerName $imageName"
-    deploy $containerName $imageName
+    deploy $containerName $imageName "$runCmd"
 
     if [ $? -eq 0 ]; then
       debug "$id finished successfully"
@@ -105,8 +115,8 @@ process_json() {
 
 main() {
   while read array; do
-  	#[[ -n $array ]] && echo $array | jq '.[length - 1]' -c | process_json
-  	[[ -n $array ]] && echo $array | jq '.[]' -c | process_json
+  	[[ -n $array ]] && echo $array | jq '.[length - 1]' -c | process_json
+  	#[[ -n $array ]] && echo $array | jq '.[]' -c | process_json
   done
 }
 [[ "$0" == "$BASH_SOURCE" ]] && main "$@"
